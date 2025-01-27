@@ -32,7 +32,7 @@ def test_save_to_supabase():
         "hotwaterheating": "no",
         "airconditioning": "yes",
         "parking": 2,
-        "prefarea": "YES",
+        "prefarea": "yes",
         "furnishingstatus": "furnished"
     }
     predicted_value = 13300000
