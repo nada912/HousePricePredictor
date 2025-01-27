@@ -9,6 +9,8 @@ from backend.app import app
 load_dotenv()
 
 MLFLOW_TRACKING_URI = os.getenv('MLFLOW_TRACKING_URI')
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def test_load_model_from_mlflow():
     """
