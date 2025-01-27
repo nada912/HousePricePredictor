@@ -1,6 +1,10 @@
 import pytest
 import supabase
-from backend.connect_supabase import save_to_supabase
+# exit the current directory and point to the backend directory
+import sys
+sys.path.append('backend')
+from app import save_to_supabase
+
 
 def test_save_to_supabase():
     """Test saving a prediction to Supabase."""
