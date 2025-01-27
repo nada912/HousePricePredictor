@@ -37,8 +37,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: 
-          export PYTHONPATH=/home/runner/work/HousePricePredictor
-          pytest --rootdir=/home/runner/work/HousePricePredictor --disable-warnings tests/unit/
+          pytest --disable-warnings tests/unit/
         working-directory: /home/runner/work/HousePricePredictor
 
 
