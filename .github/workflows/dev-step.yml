@@ -31,7 +31,7 @@ jobs:
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
       
       - name: Check .env
-        run: cat .env
+        run: cat backend/.env
       
       - name: Run unit tests
         run: 
