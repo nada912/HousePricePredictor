@@ -7,5 +7,5 @@ scikit-learn
 pandas
 supabase
 pytest
-supabase_client
 aiohttp
+supabase_client
