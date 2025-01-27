@@ -3,11 +3,10 @@ import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 from dotenv import load_dotenv
 import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 from supabase import create_client
-from backend import app
-
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from backend.app import app
 # Load environment variables
 load_dotenv()
 
