@@ -1,6 +1,6 @@
 import pytest
 import supabase
-from connect_supabase import save_to_supabase
+from backend.connect_supabase import save_to_supabase
 
 def test_save_to_supabase():
     """Test saving a prediction to Supabase."""
