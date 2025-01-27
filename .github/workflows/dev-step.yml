@@ -32,6 +32,9 @@ jobs:
           echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> $GITHUB_ENV
           echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
 
+      - name: List Directory Contents
+        run: ls -R /home/runner/work/HousePricePredictor
+        
       - name: Run unit tests
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
