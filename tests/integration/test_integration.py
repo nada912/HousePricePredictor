@@ -2,8 +2,11 @@ import pytest
 import supabase
 # exit the current directory and point to the backend directory
 import sys
-sys.path.append('backend')
-from app import save_to_supabase
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from backend.connect_supabase import save_to_supabase
 
 
 def test_save_to_supabase():
