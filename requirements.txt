@@ -3,3 +3,10 @@ flask-cors
 numpy
 mlflow
 python-dotenv
+scikit-learn
+pandas
+supabase
+pytest
+os
+requests
+dotenv

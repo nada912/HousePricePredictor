@@ -41,7 +41,7 @@ jobs:
 
       - name: Wait for API to be ready
         run: |
-          until curl -s http://127.0.0.1:8000/metrics; do
+          until curl -s http://127.0.0.0:8000/predict; do
             echo "Waiting for API to be ready..."
             sleep 2
           done
