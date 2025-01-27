@@ -13,11 +13,13 @@ def test_predict_endpoint_e2e():
     assert response.status_code == 200
     assert "predicted_price" in response.json()
 
+
 def test_fetch_predictions_e2e():
     """Test fetching predictions."""
     response = requests.get(f"{BASE_URL}/predictions")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+    
 
 def test_save_and_fetch_prediction_e2e():
     """Test save and fetch prediction flow."""
