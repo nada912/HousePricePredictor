@@ -21,7 +21,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip cache purge
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install wheel
@@ -38,7 +37,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: 
-          pytest --disable-warnings backend/tests/unit/
+          pytest --disable-warnings tests/unit/
 
       - name: Start API
         run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
@@ -58,11 +57,11 @@ jobs:
 
       - name: Run integration tests
         run: 
-          pytest --disable-warnings backend/tests/integration/
+          pytest --disable-warnings tests/integration/
 
       - name: Run end-to-end tests
         run: 
-          pytest --disable-warnings backend/tests/e2e/
+          pytest --disable-warnings tests/e2e/
 
       - name: Merge dev into staging
         if: success()
