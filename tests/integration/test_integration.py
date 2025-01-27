@@ -32,7 +32,7 @@ def test_save_to_supabase():
         "hotwaterheating": "no",
         "airconditioning": "yes",
         "parking": 2,
-        "prefarea": "YES",
+        "prefarea": "yes",
         "furnishingstatus": "furnished"
     }
     predicted_value = 13300000
@@ -88,7 +88,7 @@ def client():
     app.testing = True
     return app.test_client()
 
-@patch("backend.api.supabase")  # Ensure this matches the actual import path in your code
+@patch("backend.api.supabase")  
 @patch("backend.api.preprocess_input")
 @patch("backend.api.loaded_model")
 def test_predict_and_save(mock_loaded_model, mock_preprocess_input, mock_supabase_client, client):
