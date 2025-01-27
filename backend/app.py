@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import mlflow
 import mlflow.pyfunc
 from flask_cors import CORS
-from connect_supabase import save_to_supabase
+from supabase import create_client
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +21,25 @@ MODEL_NAME = "LinearRegressionModel"
 
 # Set MLflow tracking URI
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+# Set supabase URL and key
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# Initialize Supabase client
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def save_to_supabase(input_data, predicted_value):
+    """Save prediction to Supabase."""
+    try:
+        response = supabase.table("predictions").insert({
+            "input_data": input_data,
+            "predicted_value": predicted_value
+        }).execute()
+        print("Prediction saved to Supabase:", response.data)
+    except Exception as e:
+        print(f"Error saving to Supabase: {e}")
+
 
 # Global variable to store the preloaded model
 loaded_model = None
