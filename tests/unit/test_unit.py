@@ -38,27 +38,14 @@ def test_load_model_from_dagshub():
     DAGSHUB_REPO_NAME
     DAGSHUB_USERNAME
 
+    model_name = "PolynomialRegressionModel"
     client = MlflowClient()
 
-    # fetch the model in production stage
-    registered_models = client.search_registered_models()
-    
-    for model in registered_models:
-        # Check all versions of the model for the Production stage
-        production_versions = client.get_latest_versions(model.name, stages=["Production"])
-        print(f"Model: {model.name}, Versions: {production_versions}")
-        
-        if production_versions:
-            # Get the model with version not empty
-            latest_version = production_versions[0]
-            print(f"Latest Production Version: {latest_version.version}")
-            model_name = model.name
-            print(f"Model Name: {model_name}")
-            model_uri = latest_version.source  # Use the source URI directly
-            print(f"Model URI: {model_uri}")
+    # Get latest version in production 
+    latest_version = client.get_latest_versions(model_name, stages=["Production"])[0].version
 
     # Load the model and check if it's functional
-    model_uri = f"models:/{model_name}/Production"
+    model_uri = f"models:/{model_name}/{latest_version}"
     print(f"Model URI to load: {model_uri}")
     loaded_model = mlflow.pyfunc.load_model(model_uri)
     assert loaded_model is not None
