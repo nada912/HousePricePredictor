@@ -1,6 +1,14 @@
 import pytest
 import supabase
 from backend.connect_supabase import save_to_supabase
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 def test_save_to_supabase():
     """Test saving a prediction to Supabase."""
