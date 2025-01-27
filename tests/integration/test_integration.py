@@ -1,13 +1,6 @@
 import pytest
 import supabase
-# exit the current directory and point to the backend directory
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from backend.connect_supabase import save_to_supabase
-
 
 def test_save_to_supabase():
     """Test saving a prediction to Supabase."""
