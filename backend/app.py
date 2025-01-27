@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import mlflow
 import mlflow.pyfunc
 from flask_cors import CORS
-from supabase_client import save_to_supabase
+from connect_supabase import save_to_supabase
 
 # Load environment variables
 load_dotenv()
