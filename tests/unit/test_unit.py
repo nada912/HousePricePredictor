@@ -42,33 +42,26 @@ def test_load_model_from_dagshub():
 
     # fetch the model in production stage
     registered_models = client.search_registered_models()
-
-    model_name = None  # Initialize model_name outside the loop
-
+    
     for model in registered_models:
         # Check all versions of the model for the Production stage
         production_versions = client.get_latest_versions(model.name, stages=["Production"])
         print(f"Model: {model.name}, Versions: {production_versions}")
-
+        
         if production_versions:
-            # Get the latest version saved as Production
-            latest_version = max(production_versions, key=lambda v: v.version)
+            # Get the model with version not empty
+            latest_version = production_versions[0]
             print(f"Latest Production Version: {latest_version.version}")
-            model_name = model.name  # Now this will always be assigned if production versions exist
+            model_name = model.name
             print(f"Model Name: {model_name}")
             model_uri = latest_version.source  # Use the source URI directly
             print(f"Model URI: {model_uri}")
 
-    # Check if model_name was successfully assigned
-    if model_name is not None:
-        model_uri = f"models:/{model_name}/Production"
-        # Load the model and check if it's functional
-        loaded_model = mlflow.pyfunc.load_model(model_uri)
-        print(f"Loaded model: {loaded_model}")
-    else:
-        print("No production model found.")
-        raise ValueError("No production model found in the DagsHub repository.")
-
+    # Load the model and check if it's functional
+    model_uri = f"models:/{model_name}/Production"
+    print(f"Model URI to load: {model_uri}")
+    loaded_model = mlflow.pyfunc.load_model(model_uri)
+    assert loaded_model is not None
 
 
 from unittest.mock import patch, MagicMock
@@ -125,7 +118,7 @@ def test_predict_route(mock_save_to_supabase, mock_preprocess_input, mock_loaded
     # Verify save_to_supabase was called with the input data and prediction
     mock_save_to_supabase.assert_called_once_with(input_data, 150000)
 
-
+    
 def test_predict_route_invalid_input():
     """Test the predict route with invalid input."""
     client = app.test_client()
