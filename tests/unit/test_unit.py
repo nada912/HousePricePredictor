@@ -7,7 +7,8 @@ from supabase import create_client
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from backend import *
-from backend.api import app
+from backend.api import app, preprocess_input
+
 # Load environment variables
 load_dotenv()
 
@@ -117,7 +118,7 @@ def test_predict_route(mock_save_to_supabase, mock_preprocess_input, mock_loaded
     # Verify save_to_supabase was called with the input data and prediction
     mock_save_to_supabase.assert_called_once_with(input_data, 150000)
 
-
+    
 def test_predict_route_invalid_input():
     """Test the predict route with invalid input."""
     client = app.test_client()
@@ -127,6 +128,53 @@ def test_predict_route_invalid_input():
 
 
 """
+# test needs more work 
+def test_predict_route(client, load_model):
+    #Test the predict route with valid input using the real loaded model.
+    
+    global loaded_model
+
+    # Ensure the model is loaded before testing
+    if loaded_model is None:
+        raise ValueError("Model is not loaded. Please check if model loading is successful.")
+
+    # Define the input data
+    input_data = {
+        "area": 7420,
+        "bedrooms": 4,
+        "bathrooms": 2,
+        "stories": 3,
+        "mainroad": "yes",
+        "guestroom": "no",
+        "basement": "no",
+        "hotwaterheating": "no",
+        "airconditioning": "yes",
+        "parking": 2,
+        "prefarea": "yes",
+        "furnishingstatus": "furnished"
+    }
+
+    input_features = preprocess_input(input_data)  # Preprocess the input using the same method as in the backend
+    print(f"Processed Features: {input_features.head(10)}")
+
+    # Convert the DataFrame to a dictionary
+    input_features_dict = input_features.to_dict(orient='records')[0]
+
+    # Send POST request to /predict
+    response = client.post("/predict", json=input_features_dict)
+    print(response.get_data(as_text=True))
+
+    # Assert response status code
+    assert response.status_code == 200
+
+    # Assert response JSON structure and content
+    response_data = response.get_json()
+    assert "predicted_price" in response_data
+"""
+
+
+"""
+# test works on local only
 def test_load_model_from_mlflow():
 
     #Test loading the model from MLflow.
