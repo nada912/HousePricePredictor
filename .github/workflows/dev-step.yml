@@ -32,11 +32,11 @@ jobs:
 
       # create supabase client
       - name: Create Supabase client
-        run: |
-          python -c "from supabase import create_client; create_client()"
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          python -c "from supabase import create_client; create_client(SUPABASE_URL, SUPABASE_KEY)"
       
       - name: Run unit tests
         run: 
