@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import mlflow
 import mlflow.pyfunc
 from flask_cors import CORS
-from connect_supabase import save_to_supabase
+from supabase import create_client
 
 # Load environment variables
 load_dotenv()
@@ -21,6 +21,29 @@ MODEL_NAME = "LinearRegressionModel"
 
 # Set MLflow tracking URI
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+# set supabase variables
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# Initialize Supabase client
+if not SUPABASE_URL or not SUPABASE_KEY:
+    print("Warning: Supabase URL or Key is not set. Running in mock mode.")
+    supabase = None
+else:
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+def save_to_supabase(input_data, predicted_value):
+    """Save prediction to Supabase."""
+    try:
+        response = supabase.table("predictions").insert({
+            "input_data": input_data,
+            "predicted_value": predicted_value
+        }).execute()
+        print("Prediction saved to Supabase:", response.data)
+    except Exception as e:
+        print(f"Error saving to Supabase: {e}")
+
 
 # Global variable to store the preloaded model
 loaded_model = None
@@ -106,6 +129,27 @@ def predict():
 
         # Return the predicted price as JSON
         return jsonify({"predicted_price": predicted_price_int})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+    
+@app.route('/predictions', methods=['GET'])
+def get_predictions():
+    """Fetch saved predictions from Supabase."""
+    try:
+        # Check if Supabase is initialized
+        if supabase is None:
+            raise ValueError("Supabase client is not initialized. Cannot fetch predictions.")
+
+        # Fetch all records from the "predictions" table
+        response = supabase.table("predictions").select("*").execute()
+
+        # Extract data from the response
+        predictions = response.data
+
+        # Return the predictions as JSON
+        return jsonify(predictions)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
