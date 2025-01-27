@@ -32,7 +32,7 @@ jobs:
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
 
       - name: Run unit tests
-        run: pytest tests/unit/
+        run: pytest backend/tests/unit/
 
       - name: Start API
         run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
@@ -51,10 +51,10 @@ jobs:
         shell: bash
 
       - name: Run integration tests
-        run: pytest tests/integration/
+        run: pytest backend/tests/integration/
 
       - name: Run end-to-end tests
-        run: pytest tests/E2E/
+        run: pytest backend/tests/E2E/
 
       - name: Merge dev into main
         if: success()
