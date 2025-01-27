@@ -33,7 +33,7 @@ jobs:
           echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
 
       - name: List Directory Contents
-        run: ls -R /home/runner/work/HousePricePredictor
+        run: ls -R pwd
         
       - name: Run unit tests
         env:
@@ -41,8 +41,6 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: 
           pytest --disable-warnings tests/unit/
-        working-directory: /home/runner/work/HousePricePredictor
-
 
       - name: Start API
         run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
@@ -62,11 +60,11 @@ jobs:
 
       - name: Run integration tests
         run: 
-          pytest --rootdir=/home/runner/work/HousePricePredictor --disable-warnings tests/integration/
+          pytest --disable-warnings tests/integration/
 
       - name: Run end-to-end tests
         run: 
-          pytest --rootdir=/home/runner/work/HousePricePredictor --disable-warnings tests/e2e/
+          pytest --disable-warnings tests/e2e/
 
       - name: Merge dev into staging
         if: success()
