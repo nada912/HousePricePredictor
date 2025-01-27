@@ -6,7 +6,7 @@ import os
 from supabase import create_client
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from backend.app import app
+from backend.api import app
 # Load environment variables
 load_dotenv()
 

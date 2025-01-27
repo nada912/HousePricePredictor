@@ -27,7 +27,7 @@ def test_fetch_predictions():
 
 def test_predict_and_save():
     """Test prediction and saving to Supabase together."""
-    from app import app
+    from api import app
     client = app.test_client()
     response = client.post('/predict', json={
         "area": 1200, "bedrooms": 2, "bathrooms": 1, "stories": 1,
