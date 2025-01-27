@@ -33,7 +33,7 @@ jobs:
           echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
 
       - name: List Directory Contents
-        run: ls -R pwd
+        run: ls -R $(pwd)
         
       - name: Run unit tests
         env:
