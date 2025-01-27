@@ -29,7 +29,10 @@ jobs:
 
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
-
+      
+      - name: Check .env
+        run: cat .env
+      
       - name: Run unit tests
         run: 
           pytest --disable-warnings tests/unit/
