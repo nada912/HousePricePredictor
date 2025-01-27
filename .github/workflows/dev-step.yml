@@ -36,8 +36,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
-          python -c "from supabase import create_client; create_client(SUPABASE_URL, SUPABASE_KEY)"
-      
+          python -c "from supabase import create_client; create_client('$SUPABASE_URL', '$SUPABASE_KEY')"
       - name: Run unit tests
         run: 
           pytest --disable-warnings tests/unit/
