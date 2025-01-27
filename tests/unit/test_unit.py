@@ -12,6 +12,8 @@ from backend.api import app
 load_dotenv()
 
 MLFLOW_TRACKING_URI = os.getenv('MLFLOW_TRACKING_URI')
+DAGSHUB_USERNAME = os.getenv('DAGSHUB_USERNAME')
+DAGSHUB_REPO_NAME = os.getenv('DAGSHUB_REPO_NAME')
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 
@@ -21,28 +23,44 @@ else:
     supabase = None  # No connection in test mode
 
 # Global variable to store the preloaded model
-model = None
+loaded_model = None
 
-def test_load_model_from_mlflow():
+def test_load_model_from_dagshub():
     """
-    Test loading the model from MLflow.
+    Test loading the model from MLflow instance hosted on DagsHub.
     """
-    # set the MLflow tracking URI from environment variables
+    
+    global loaded_model
+
+    # Set up MLflow tracking URI and credentials
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    DAGSHUB_REPO_NAME
+    DAGSHUB_USERNAME
 
-    model_name = "PolynomialRegressionModel"
     client = MlflowClient()
 
-    # Get the latest version of the model in the Production stage
-    latest_version = client.get_latest_versions(model_name, stages=["Production"])[0].version
-    model_uri = f"models:/{model_name}/{latest_version}"
+    # fetch the model in production stage
+    registered_models = client.search_registered_models()
     
-    try:
-        model = mlflow.sklearn.load_model(model_uri)
-    except Exception as e:
-        pytest.fail(f"The model could not be loaded from MLflow. Error : {e}")
-    
-    assert model is not None, "The model should not be None"
+    for model in registered_models:
+        # Check all versions of the model for the Production stage
+        production_versions = client.get_latest_versions(model.name, stages=["Production"])
+        print(f"Model: {model.name}, Versions: {production_versions}")
+        
+        if production_versions:
+            # Get the latest version saved as Production
+            latest_version = max(production_versions, key=lambda v: v.version)
+            print(f"Latest Production Version: {latest_version.version}")
+            model_name = model.name
+            print(f"Model Name: {model_name}")
+            model_uri = latest_version.source  # Use the source URI directly
+            print(f"Model URI: {model_uri}")
+
+    # Load the model and check if it's functional
+    model_uri = f"models:/{model_name}/Production"
+    print(f"Model URI to load: {model_uri}")
+    loaded_model = mlflow.pyfunc.load_model(model_uri)
+    assert loaded_model is not None
 
 
 from unittest.mock import patch, MagicMock
@@ -106,3 +124,27 @@ def test_predict_route_invalid_input():
     response = client.post('/predict', json={})
     assert response.status_code == 400
     assert "error" in response.get_json()
+
+
+"""
+def test_load_model_from_mlflow():
+
+    #Test loading the model from MLflow.
+
+    # set the MLflow tracking URI from environment variables
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+
+    model_name = "PolynomialRegressionModel"
+    client = MlflowClient()
+
+    # Get the latest version of the model in the Production stage
+    latest_version = client.get_latest_versions(model_name, stages=["Production"])[0].version
+    model_uri = f"models:/{model_name}/{latest_version}"
+    
+    try:
+        model = mlflow.sklearn.load_model(model_uri)
+    except Exception as e:
+        pytest.fail(f"The model could not be loaded from MLflow. Error : {e}")
+    
+    assert model is not None, "The model should not be None"
+"""
