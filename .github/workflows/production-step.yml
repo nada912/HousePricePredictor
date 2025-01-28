@@ -48,7 +48,7 @@ jobs:
           DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
           MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
         run: |
-          python model/fetch_latest_model.py
+          python model/fetch_model.py
 
       - name: Build Docker image for backend
         run: |
