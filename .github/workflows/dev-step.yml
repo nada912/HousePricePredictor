@@ -41,13 +41,13 @@ jobs:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
         run: echo "MLflow Tracking URI set to $MLFLOW_TRACKING_URI"
-        
+
       - name: Run unit tests
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: 
-          pytest --disable-warnings tests/unit/
+          pytest -s --disable-warnings tests/unit/
 
       - name: Start API
         run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
