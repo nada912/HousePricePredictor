@@ -65,7 +65,7 @@ def preload_model():
     try:
         # Locate the model in the models folder
         local_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", "models")
-        model_name = os.listdir(local_path)[1]
+        model_name = os.listdir(local_path)[0]
         print(f"Model Name: {model_name}")
 
         # Load the model using MLflow

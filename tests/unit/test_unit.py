@@ -40,7 +40,7 @@ def test_load_model_from_dagshub():
     DAGSHUB_USERNAME
 
     client = MlflowClient()
-    model_name = "PolynomialRegressionModel"
+    model_name = "LinearRegressionModel"
 
     # Get latest version in production 
     latest_version = client.get_latest_versions(model_name, stages=["Production"])[0].version
