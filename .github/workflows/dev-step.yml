@@ -46,6 +46,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
         run: 
           pytest -s --disable-warnings tests/unit/
 
