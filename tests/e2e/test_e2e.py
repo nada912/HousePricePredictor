@@ -1,6 +1,6 @@
 import requests
 
-BASE_URL = "http://localhost:8000"  # Replace with the actual base URL of your running backend
+BASE_URL = "http://127.0.0.1:8000"  # Replace with the actual base URL of your running backend
 
 def test_predict_endpoint_e2e():
     """Test the /predict endpoint with correctly formatted input."""
