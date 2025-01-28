@@ -48,7 +48,7 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
         run: 
-          pytest -s --disable-warnings tests/unit/
+          pytest --disable-warnings tests/unit/
 
       - name: Start API
         run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
@@ -60,13 +60,16 @@ jobs:
 
       - name: Wait for API to be ready
         run: |
-          until curl -s http://127.0.0.1:8000/predict; do
+          until curl -s http://127.0.0.1:8000/predict
             echo "Waiting for API to be ready..."
             sleep 2
           done
         shell: bash
 
       - name: Run integration tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: 
           pytest --disable-warnings tests/integration/
 
