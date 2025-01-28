@@ -1,0 +1,84 @@
+name: CI/CD on Dev branch
+on:
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-test-on-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install wheel
+          pip install --no-build-isolation supabase_client
+
+      - name: Set PYTHONPATH
+        run: 
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> $GITHUB_ENV
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> $GITHUB_ENV
+          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/backend:$(pwd)/frontend:$(pwd)/tests:$(pwd)" >> $GITHUB_ENV
+
+      - name: List Directory Contents
+        run: ls -R $(pwd)
+      
+      - name: Set up MLflow Tracking URI
+        env:
+          MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+        run: echo "MLflow Tracking URI set to $MLFLOW_TRACKING_URI"
+
+      - name: Run unit tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
+        run: 
+          pytest --disable-warnings tests/unit/
+
+      - name: Start API
+        run: gunicorn -w 4 -b 0.0.0.0:8000 backend.api:app &
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        shell: bash
+
+      - name: Wait for API to be ready
+        run: |
+          until curl -s http://127.0.0.1:8000/predict
+          do
+            echo "Waiting for API to be ready..."
+            sleep 2
+          done
+        shell: bash
+
+      - name: Run integration tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: 
+          pytest --disable-warnings tests/integration/
+
+      - name: Merge dev into staging
+        if: success()
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: dev
+          target_branch: staging
+          github_token: ${{ secrets.GITHUB_TOKEN }}
