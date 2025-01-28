@@ -1,25 +1,20 @@
-FROM node:18-alpine
+FROM node:16 AS build
 
 WORKDIR /app
 
-COPY package*.json ./app/
+COPY requirements.txt /app/
+COPY frontend/package*.json /app/
 
 RUN npm install
 
-COPY . .
+COPY frontend/ /app
 
-# Build argument for API URL
-ARG REACT_APP_API_URL
-
-# Set environment variable for build
-ENV REACT_APP_API_URL $REACT_APP_API_URL
-
-# Build the React app
 RUN npm run build
 
-# Install 'serve' to serve static files
-RUN npm install -g serve
+FROM nginx:alpine
 
-EXPOSE 5000
+COPY --from=build /app/build /usr/share/nginx/html
 
-CMD ["serve", "-s", "build", "-l", "5000"]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
