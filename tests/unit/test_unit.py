@@ -35,11 +35,12 @@ def test_load_model_from_dagshub():
 
     # Set up MLflow tracking URI and credentials
     mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    print(MLFLOW_TRACKING_URI)
     DAGSHUB_REPO_NAME
     DAGSHUB_USERNAME
 
-    model_name = "PolynomialRegressionModel"
     client = MlflowClient()
+    model_name = "PolynomialRegressionModel"
 
     # Get latest version in production 
     latest_version = client.get_latest_versions(model_name, stages=["Production"])[0].version
