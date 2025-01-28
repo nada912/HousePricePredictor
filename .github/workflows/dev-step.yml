@@ -75,6 +75,13 @@ jobs:
           pytest --disable-warnings tests/integration/
 
       - name: Run end-to-end tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          MLFLOW_TRACKING_URI: ${{secrets.MLFLOW_TRACKING_URI}}
         run: 
           pytest --disable-warnings tests/e2e/
 
